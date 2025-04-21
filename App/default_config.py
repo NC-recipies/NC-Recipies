@@ -1,2 +1,4 @@
-SQLALCHEMY_DATABASE_URI="sqlite:///temp-database.db"
-SECRET_KEY="secret key"
+SQLALCHEMY_DATABASE_URI="postgresql://nc_recipes_user:1qFSPOQl1KfCIJyRhtXsVbGnp14QexA3@dpg-d026d7muk2gs73e5hff0-a/nc_recipes"
+SECRET_KEY="1qFSPOQl1KfCIJyRhtXsVbGnp14QexA3"
+JWT_ACCESS_TOKEN_EXPIRES = 7
+ENV = "DEVELOPMENT"

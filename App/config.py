@@ -1,4 +1,5 @@
 import os
+from flask import render_template
 
 def load_config(app, overrides):
     if os.path.exists(os.path.join('./App', 'custom_config.py')):

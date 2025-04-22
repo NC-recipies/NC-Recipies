@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Category - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Create New Category</h2>
+                    <p class="text-center text-muted mb-4">Organize recipes into categories</p>
+                    
+                    <form method="POST" action="{{ url_for('category_views.create_category_action') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   placeholder="Enter category name" minlength="3" maxlength="50">
+                            <div class="form-text">Category name must be between 3 and 50 characters</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" 
+                                      placeholder="Describe this category"></textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Create Category</button>
+                            <a href="/categories" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

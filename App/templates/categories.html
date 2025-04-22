@@ -1,0 +1,166 @@
+{% extends "layout.html" %}
+
+{% block title %}Categories - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">Recipe Categories</h1>
+            <p class="lead text-muted">Explore recipes by category</p>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if is_authenticated %}
+            <a href="/categories/create" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create Category
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form class="d-flex" action="/categories/search" method="GET">
+                <input class="form-control me-2" type="search" name="query" placeholder="Search categories..." value="{{ search_query or '' }}">
+                <button class="btn btn-outline-primary" type="submit" aria-label="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+        <div class="col-md-6 text-end">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort By
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" href="?sort=name">Name (A-Z)</a></li>
+                    <li><a class="dropdown-item" href="?sort=name_desc">Name (Z-A)</a></li>
+                    <li><a class="dropdown-item" href="?sort=recipes">Most Recipes</a></li>
+                    <li><a class="dropdown-item" href="?sort=recent">Recently Added</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    {% if search_query %}
+    <div class="alert alert-info mb-4">
+        Showing results for: "{{ search_query }}"
+        <a href="/categories" class="float-end">Clear search</a>
+    </div>
+    {% endif %}
+
+    <!-- Categories Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for category in categories %}
+        <div class="col">
+            <div class="card h-100 category-card shadow-sm hover-shadow">
+                <div class="card-body text-center p-4">
+                    <div class="category-icon mb-3">
+                        <i class="fas fa-utensils fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="card-title h4 mb-3">{{ category.name }}</h3>
+                    {% if category.description %}
+                    <p class="card-text text-muted mb-4">{{ category.description }}</p>
+                    {% endif %}
+                    <div class="recipe-count mb-3">
+                        <span class="badge bg-primary rounded-pill px-3 py-2">
+                            <i class="fas fa-book me-1"></i>
+                            {{ category.recipes|length }} recipes
+                        </span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a href="/categories/{{ category.id }}" class="btn btn-outline-primary">
+                            View Recipes
+                        </a>
+                        {% if is_authenticated %}
+                        <div class="btn-group w-100">
+                            <a href="/categories/{{ category.id }}/edit" class="btn btn-outline-secondary">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="/categories/{{ category.id }}/delete" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger" onclick="return confirm('Are you sure you want to delete this category?')">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent text-center">
+                    <small class="text-muted">
+                        <i class="fas fa-calendar me-1"></i>
+                        Created {{ category.created_at.strftime('%B %d, %Y') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No categories found. {% if is_authenticated %}<a href="/categories/create">Create one now!</a>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if pagination and pagination.pages > 1 %}
+    <nav aria-label="Category pagination" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if pagination.has_prev %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('category_views.get_categories_page', page=pagination.prev_num) }}">Previous</a>
+            </li>
+            {% endif %}
+            
+            {% for page in pagination.iter_pages() %}
+                {% if page %}
+                    <li class="page-item {% if page == pagination.page %}active{% endif %}">
+                        <a class="page-link" href="{{ url_for('category_views.get_categories_page', page=page) }}">{{ page }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+            {% endfor %}
+            
+            {% if pagination.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="{{ url_for('category_views.get_categories_page', page=pagination.next_num) }}">Next</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<style>
+.category-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none;
+    border-radius: 10px;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+}
+
+.hover-shadow:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.category-icon {
+    color: var(--bs-primary);
+    margin-bottom: 1rem;
+}
+
+.recipe-count {
+    font-size: 1.1rem;
+}
+
+.card-footer {
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+</style>
+{% endblock %} 

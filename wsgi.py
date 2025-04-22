@@ -175,45 +175,5 @@ def user_tests_command(type):
         sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
-
-@test.command("recipe", help="Run Recipe tests")
-@click.argument("type", default="all")
-def recipe_tests_command(type):
-    if type == "unit":
-        sys.exit(pytest.main(["-k", "RecipeUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "RecipeIntegrationTests"]))
-    else:
-        sys.exit(pytest.main(["-k", "App"]))
-
-@test.command("category", help="Run Category tests")
-@click.argument("type", default="all")
-def category_tests_command(type):
-    if type == "unit":
-        sys.exit(pytest.main(["-k", "CategoryUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "CategoryIntegrationTests"]))
-    else:
-        sys.exit(pytest.main(["-k", "App"]))
-
-@test.command("review", help="Run Review tests")
-@click.argument("type", default="all")
-def review_tests_command(type):
-    if type == "unit":
-        sys.exit(pytest.main(["-k", "ReviewUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "ReviewIntegrationTests"]))
-    else:
-        sys.exit(pytest.main(["-k", "App"]))
-
-@test.command("ingredient", help="Run Ingredient tests")
-@click.argument("type", default="all")
-def ingredient_tests_command(type):
-    if type == "unit":
-        sys.exit(pytest.main(["-k", "IngredientUnitTests"]))
-    elif type == "int":
-        sys.exit(pytest.main(["-k", "IngredientIntegrationTests"]))
-    else:
-        sys.exit(pytest.main(["-k", "App"]))
-
+        
 app.cli.add_command(test)

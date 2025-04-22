@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block title %}Reviews - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h1 class="display-4">Reviews</h1>
+            <p class="lead text-muted">See what our community is saying</p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% for review in reviews %}
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="rating">
+                            {% for i in range(5) %}
+                                {% if i < review.rating %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <small class="text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</small>
+                    </div>
+
+                    <p class="card-text">{{ review.comment }}</p>
+
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ review.user.profile_image or 'https://via.placeholder.com/40' }}" 
+                                 class="rounded-circle me-2" width="40" height="40" 
+                                 alt="{{ review.user.username }}">
+                            <div>
+                                <h6 class="mb-0">{{ review.user.username }}</h6>
+                                <small class="text-muted">on 
+                                    <a href="{{ url_for('recipe_views.get_recipe_page_by_id', id=review.recipe_id) }}" 
+                                       class="text-decoration-none">
+                                        {{ review.recipe.title }}
+                                    </a>
+                                </small>
+                            </div>
+                        </div>
+                        {% if is_authenticated and review.user_id == current_user.id %}
+                        <div class="btn-group">
+                            <a href="{{ url_for('review_views.get_edit_review_page', id=review.id) }}" 
+                               class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="{{ url_for('review_views.delete_review_action', id=review.id) }}" 
+                                  method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                        onclick="return confirm('Are you sure you want to delete this review?')"
+                                        aria-label="Delete review">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No reviews found.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

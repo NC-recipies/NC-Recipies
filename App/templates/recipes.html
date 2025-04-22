@@ -1,0 +1,76 @@
+{% extends "layout.html" %}
+
+{% block title %}Recipes - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">Recipes</h1>
+            <p class="lead text-muted">Discover and share delicious recipes from our community</p>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if is_authenticated %}
+            <a href="/recipes/create" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Create Recipe
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if search_query %}
+    <div class="alert alert-info">
+        Showing results for: "{{ search_query }}"
+        <a href="/recipes" class="float-end">Clear search</a>
+    </div>
+    {% endif %}
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for recipe in recipes %}
+        <div class="col">
+            <div class="card recipe-card h-100">
+                {% if recipe.image_url %}
+                <img src="{{ recipe.image_url }}" class="card-img-top" alt="{{ recipe.title }}">
+                {% else %}
+                <img src="https://via.placeholder.com/300x200?text=No+Image" class="card-img-top" alt="No image available">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text text-muted">
+                        <small>
+                            <i class="fas fa-clock me-1"></i>{{ recipe.prep_time + recipe.cook_time }} mins
+                            <i class="fas fa-utensils ms-3 me-1"></i>{{ recipe.servings }} servings
+                        </small>
+                    </p>
+                    <p class="card-text">{{ recipe.description[:150] }}{% if recipe.description|length > 150 %}...{% endif %}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="rating">
+                            {% for i in range(5) %}
+                                {% if i < recipe.get_recipe_average_rating() %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <a href="/recipes/{{ recipe.id }}" class="btn btn-outline-primary">View Recipe</a>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="fas fa-user me-1"></i>{{ recipe.user.username }}
+                        <i class="fas fa-calendar ms-3 me-1"></i>{{ recipe.created_at.strftime('%B %d, %Y') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No recipes found. {% if is_authenticated %}<a href="/recipes/create">Create one now!</a>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

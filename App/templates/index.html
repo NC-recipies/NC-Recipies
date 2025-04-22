@@ -1,13 +1,190 @@
 {% extends "layout.html" %}
-{% block title %}Flask MVC App{% endblock %}
-{% block page %}Flask MVC App{% endblock %}
 
-{{ super() }}
+{% block title %}RecipeHub - Discover & Share Delicious Recipes{% endblock %}
 
 {% block content %}
-    <h1>Flask MVC</h1>
-    {% if is_authenticated %}
-        <p> Welcome {{current_user.username}} </p>
-    {% endif %}
-    <p>This is a boileplate flask application which follows the MVC pattern for structuring the project.</p>
+<!-- Hero Section -->
+<div class="hero-section position-relative text-white mb-5">
+    <div class="container position-relative z-1 py-5">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Discover & Share Delicious Recipes</h1>
+                <p class="lead mb-4">Join our community of food enthusiasts and explore thousands of recipes from around the world.</p>
+                <div class="d-flex gap-3">
+                    <a href="/recipes" class="btn btn-primary btn-lg">Browse Recipes</a>
+                    {% if not is_authenticated %}
+                    <a href="/signup" class="btn btn-outline-light btn-lg">Join Now</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-overlay"></div>
+</div>
+
+<!-- Featured Recipes Section -->
+<div class="container mb-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-center mb-4">Featured Recipes</h2>
+            <p class="text-center text-muted lead">Discover our most popular and trending recipes</p>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for recipe in featured_recipes %}
+        <div class="col">
+            <div class="card h-100 recipe-card">
+                <img src="{{ recipe.image_url or 'https://via.placeholder.com/400x300?text=Recipe' }}" class="card-img-top" alt="{{ recipe.title }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ recipe.title }}</h5>
+                    <p class="card-text text-muted">{{ recipe.description[:100] }}...</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="recipe-meta">
+                            <span class="badge bg-primary me-2">
+                                <i class="fas fa-clock me-1"></i>{{ recipe.prep_time + recipe.cook_time }} min
+                            </span>
+                            <span class="badge bg-primary">
+                                <i class="fas fa-utensils me-1"></i>{{ recipe.servings }} servings
+                            </span>
+                        </div>
+                        <div class="rating">
+                            {% for i in range(5) %}
+                                {% if i < recipe.get_recipe_average_rating() %}
+                                    <i class="fas fa-star text-warning"></i>
+                                {% else %}
+                                    <i class="far fa-star text-warning"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="/recipes/{{ recipe.id }}" class="btn btn-outline-primary w-100">View Recipe</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div class="container mb-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-center mb-4">Popular Categories</h2>
+            <p class="text-center text-muted lead">Find recipes by category</p>
+        </div>
+    </div>
+    <div class="row row-cols-2 row-cols-md-4 g-4">
+        {% for category in popular_categories %}
+        <div class="col">
+            <a href="/categories/{{ category.id }}" class="text-decoration-none">
+                <div class="card h-100 category-card">
+                    <div class="card-body text-center">
+                        <i class="fas fa-utensils fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">{{ category.name }}</h5>
+                        <p class="card-text text-muted">{{ category.recipes|length }} recipes</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Call to Action Section -->
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center text-center">
+            <div class="col-lg-8">
+                <h2 class="mb-4">Ready to Share Your Recipes?</h2>
+                <p class="lead mb-4">Join our community of food enthusiasts and share your culinary creations with the world.</p>
+                {% if is_authenticated %}
+                <a href="/recipes/create" class="btn btn-primary btn-lg">Create Recipe</a>
+                {% else %}
+                <a href="/signup" class="btn btn-primary btn-lg">Join Now</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Latest Reviews Section -->
+<div class="container mb-5">
+    <div class="row mb-4">
+        <div class="col">
+            <h2 class="text-center mb-4">Latest Reviews</h2>
+            <p class="text-center text-muted lead">See what our community is saying</p>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for review in latest_reviews %}
+        <div class="col">
+            <div class="card h-100 review-card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="flex-shrink-0">
+                            <img src="{{ review.user.profile_image or 'https://via.placeholder.com/50' }}" 
+                                 class="rounded-circle" 
+                                 width="50" 
+                                 height="50" 
+                                 alt="{{ review.user.username }}"
+                                 style="object-fit: cover;">
+                        </div>
+                        <div class="flex-grow-1 ms-3">
+                            <h6 class="mb-0">{{ review.user.username }}</h6>
+                            <small class="text-muted">{{ review.created_at.strftime('%B %d, %Y') }}</small>
+                        </div>
+                    </div>
+                    <div class="rating mb-2">
+                        {% for i in range(5) %}
+                            {% if i < review.rating %}
+                                <i class="fas fa-star text-warning"></i>
+                            {% else %}
+                                <i class="far fa-star text-warning"></i>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <p class="card-text">{{ review.comment[:150] }}{% if review.comment|length > 150 %}...{% endif %}</p>
+                    <a href="/recipes/{{ review.recipe.id }}" class="text-decoration-none">
+                        <div class="d-flex align-items-center">
+                            <img src="{{ review.recipe.image_url or 'https://via.placeholder.com/50' }}" 
+                                 class="rounded me-2" 
+                                 width="50" 
+                                 height="50" 
+                                 alt="{{ review.recipe.title }}"
+                                 style="object-fit: cover;">
+                            <div>
+                                <small class="text-muted">View recipe:</small>
+                                <div class="text-primary">{{ review.recipe.title }}</div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.review-card {
+    transition: transform 0.2s ease-in-out;
+    border: none;
+    border-radius: 10px;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+}
+
+.rating {
+    font-size: 1.1rem;
+}
+
+.review-card .card-text {
+    color: #666;
+    line-height: 1.6;
+}
+</style>
 {% endblock %}

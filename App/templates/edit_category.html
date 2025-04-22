@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Category - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Edit Category</h2>
+                    <p class="text-center text-muted mb-4">Update category details</p>
+                    
+                    <form method="POST" action="{{ url_for('category_views.edit_category_action', id=category.id) }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Category Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   placeholder="Enter category name" minlength="3" maxlength="50"
+                                   value="{{ category.name }}">
+                            <div class="form-text">Category name must be between 3 and 50 characters</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" 
+                                      placeholder="Describe this category">{{ category.description }}</textarea>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Update Category</button>
+                            <a href="/categories/{{ category.id }}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

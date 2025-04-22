@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ 'Edit' if ingredient else 'Create' }} Ingredient - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">{{ 'Edit' if ingredient else 'Create' }} Ingredient</h2>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('ingredient_views.create_ingredient_action') if not ingredient else url_for('ingredient_views.update_ingredient_action', id=ingredient.id) }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ ingredient.name if ingredient else '' }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3">{{ ingredient.description if ingredient else '' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="unit" class="form-label">Unit</label>
+                            <input type="text" class="form-control" id="unit" name="unit" value="{{ ingredient.unit if ingredient else '' }}">
+                            <div class="form-text">e.g., grams, cups, tablespoons</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                {{ 'Update' if ingredient else 'Create' }} Ingredient
+                            </button>
+                            <a href="{{ url_for('ingredient_views.get_ingredients_page') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

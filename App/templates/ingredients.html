@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+
+{% block title %}Ingredients - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="display-4">Ingredients</h1>
+            <p class="lead text-muted">Browse and manage ingredients</p>
+        </div>
+        <div class="col-md-4 text-end">
+            {% if is_authenticated %}
+            <a href="/ingredients/create" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Add Ingredient
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form class="d-flex" action="/ingredients/search" method="GET">
+                <input class="form-control me-2" type="search" name="name" placeholder="Search ingredients..." value="{{ search_query or '' }}">
+                <button class="btn btn-outline-primary" type="submit" aria-label="Search">
+                    <i class="fas fa-search"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Ingredients Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        {% for ingredient in ingredients %}
+        <div class="col">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ ingredient.name }}</h5>
+                    <p class="card-text">{{ ingredient.description }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="badge bg-primary">
+                            <i class="fas fa-balance-scale me-1"></i>
+                            {{ ingredient.unit }}
+                        </span>
+                        <div class="btn-group">
+                            <a href="/ingredients/{{ ingredient.id }}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                            {% if is_authenticated %}
+                            <a href="/ingredients/{{ ingredient.id }}/edit" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form action="/ingredients/{{ ingredient.id }}/delete" method="POST" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this ingredient?')" aria-label="Delete ingredient">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <small class="text-muted">
+                        <i class="fas fa-utensils me-1"></i>
+                        Used in {{ ingredient.recipes|length }} recipes
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No ingredients found. {% if is_authenticated %}<a href="/ingredients/create">Add one now!</a>{% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

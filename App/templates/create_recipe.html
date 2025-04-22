@@ -1,0 +1,155 @@
+{% extends "layout.html" %}
+
+{% block title %}Create Recipe - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Create New Recipe</h2>
+                    <p class="text-center text-muted mb-4">Share your culinary masterpiece with the world</p>
+                    
+                    <form method="POST" action="{{ url_for('recipe_views.create_recipe_action') }}" enctype="multipart/form-data">
+                        <!-- Basic Information -->
+                        <div class="mb-4">
+                            <h4 class="mb-3">Basic Information</h4>
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Recipe Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required 
+                                       placeholder="Enter recipe title">
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" required 
+                                          placeholder="Describe your recipe"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="category_id" class="form-label">Category</label>
+                                <div class="input-group">
+                                    <select class="form-select" id="category_id" name="category_id" required>
+                                        <option value="" selected disabled>Select a category</option>
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    {% if is_authenticated %}
+                                    <a href="/categories/create" class="btn btn-outline-primary" target="_blank">
+                                        <i class="fas fa-plus me-1"></i>New Category
+                                    </a>
+                                    {% endif %}
+                                </div>
+                                <div class="form-text">
+                                    Choose an existing category or create a new one
+                                    {% if not categories %}
+                                    <div class="alert alert-warning mt-2">
+                                        No categories available. <a href="/categories/create">Create your first category</a>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="image_url" class="form-label">Recipe Image</label>
+                                <input type="file" class="form-control" id="image_url" name="image_url" 
+                                       accept="image/*">
+                                <div class="form-text">Upload a high-quality image of your recipe (optional)</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Time and Servings -->
+                        <div class="mb-4">
+                            <h4 class="mb-3">Time and Servings</h4>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="prep_time" class="form-label">Prep Time (minutes)</label>
+                                    <input type="number" class="form-control" id="prep_time" name="prep_time" 
+                                           min="0" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="cook_time" class="form-label">Cook Time (minutes)</label>
+                                    <input type="number" class="form-control" id="cook_time" name="cook_time" 
+                                           min="0" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="servings" class="form-label">Servings</label>
+                                    <input type="number" class="form-control" id="servings" name="servings" 
+                                           min="1" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Ingredients -->
+                        <div class="mb-4">
+                            <h4 class="mb-3">Ingredients</h4>
+                            <div id="ingredients-container">
+                                <div class="ingredient-item mb-3">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" name="ingredient_names[]" 
+                                                   placeholder="Ingredient name" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" class="form-control" name="ingredient_quantities[]" 
+                                                   placeholder="Quantity" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control" name="ingredient_units[]" 
+                                                   placeholder="Unit" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-outline-primary" onclick="addIngredient()">
+                                <i class="fas fa-plus me-1"></i>Add Ingredient
+                            </button>
+                        </div>
+                        
+                        <!-- Instructions -->
+                        <div class="mb-4">
+                            <h4 class="mb-3">Instructions</h4>
+                            <div class="mb-3">
+                                <textarea class="form-control" id="instructions" name="instructions" rows="10" required 
+                                          placeholder="Enter step-by-step instructions for your recipe"></textarea>
+                                <div class="form-text">Enter each step on a new line</div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Create Recipe</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function addIngredient() {
+    const container = document.getElementById('ingredients-container');
+    const newIngredient = document.createElement('div');
+    newIngredient.className = 'ingredient-item mb-3';
+    newIngredient.innerHTML = `
+        <div class="row">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="ingredient_names[]" 
+                       placeholder="Ingredient name" required>
+            </div>
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="ingredient_quantities[]" 
+                       placeholder="Quantity" required>
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="ingredient_units[]" 
+                       placeholder="Unit" required>
+            </div>
+        </div>
+    `;
+    container.appendChild(newIngredient);
+}
+</script>
+{% endblock %} 

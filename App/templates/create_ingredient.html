@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Ingredient - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Add New Ingredient</h2>
+                    <p class="text-center text-muted mb-4">Create a new ingredient for your recipes</p>
+                    
+                    <form method="POST" action="{{ url_for('ingredient_views.create_ingredient_action') }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Ingredient Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   placeholder="Enter ingredient name" minlength="2" maxlength="50">
+                            <div class="form-text">Ingredient name must be between 2 and 50 characters</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" 
+                                      placeholder="Describe this ingredient"></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="unit" class="form-label">Default Unit</label>
+                            <input type="text" class="form-control" id="unit" name="unit" 
+                                   placeholder="e.g., grams, cups, tablespoons">
+                            <div class="form-text">The default unit of measurement for this ingredient</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Add Ingredient</button>
+                            <a href="/ingredients" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

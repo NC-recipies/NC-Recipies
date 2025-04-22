@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block title %}{{ 'Edit' if review else 'Create' }} Review - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="mb-0">{{ 'Edit' if review else 'Create' }} Review</h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h4>Recipe: {{ recipe.title }}</h4>
+                        <p class="text-muted">{{ recipe.description }}</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('review_views.create_review_action', recipe_id=recipe.id) if not review else url_for('review_views.update_review_action', id=review.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-input">
+                                {% for i in range(5, 0, -1) %}
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="rating" id="rating{{ i }}" value="{{ i }}" 
+                                           {{ 'checked' if review and review.rating == i else '' }} required>
+                                    <label class="form-check-label" for="rating{{ i }}">
+                                        {% for j in range(i) %}
+                                        <i class="fas fa-star text-warning"></i>
+                                        {% endfor %}
+                                    </label>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="comment" class="form-label">Comment</label>
+                            <textarea class="form-control" id="comment" name="comment" rows="5" required 
+                                      placeholder="Share your thoughts about this recipe...">{{ review.comment if review else '' }}</textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                {{ 'Update' if review else 'Submit' }} Review
+                            </button>
+                            <a href="{{ url_for('recipe_views.get_recipe_page_by_id', id=recipe.id) }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}Edit Ingredient - RecipeHub{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Edit Ingredient</h2>
+                    <p class="text-center text-muted mb-4">Update ingredient details</p>
+                    
+                    <form method="POST" action="{{ url_for('ingredient_views.edit_ingredient_action', id=ingredient.id) }}">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Ingredient Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   placeholder="Enter ingredient name" minlength="2" maxlength="50"
+                                   value="{{ ingredient.name }}">
+                            <div class="form-text">Ingredient name must be between 2 and 50 characters</div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" 
+                                      placeholder="Describe this ingredient">{{ ingredient.description }}</textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="unit" class="form-label">Default Unit</label>
+                            <input type="text" class="form-control" id="unit" name="unit" 
+                                   placeholder="e.g., grams, cups, tablespoons"
+                                   value="{{ ingredient.unit }}">
+                            <div class="form-text">The default unit of measurement for this ingredient</div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Update Ingredient</button>
+                            <a href="/ingredients/{{ ingredient.id }}" class="btn btn-outline-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
